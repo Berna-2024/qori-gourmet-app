@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Qori Gourmet</title>
+
+    <link
+        rel="stylesheet"
+        href="styles.css"
+    >
+
+</head>
+
+<body>
+
+    <header>
+
+        <h1>Qori Gourmet</h1>
+
+        <p>
+            Productos gourmet peruanos
+        </p>
+
+    </header>
+
+
+    <main>
+
+        <h2>
+            Nuestros productos
+        </h2>
+
+        <div id="estado">
+            Cargando productos...
+        </div>
+
+        <div
+            id="productos"
+            class="productos"
+        ></div>
+
+    </main>
+
+
+    <script>
+
+        async function cargarProductos() {
+
+            const contenedor =
+                document.getElementById('productos');
+
+            const estado =
+                document.getElementById('estado');
+
+            try {
+
+                const respuesta =
+                    await fetch('/productos');
+
+                if (!respuesta.ok) {
+                    throw new Error(
+                        'No fue posible cargar los productos'
+                    );
+                }
+
+                const productos =
+                    await respuesta.json();
+
+                estado.textContent = '';
+
+                if (productos.length === 0) {
+
+                    estado.textContent =
+                        'No existen productos registrados.';
+
+                    return;
+                }
+
+
+                productos.forEach(producto => {
+
+                    const tarjeta =
+                        document.createElement('div');
+
+                    tarjeta.classList.add('producto');
+
+
+                    tarjeta.innerHTML = `
+                        <h3>${producto.nombre}</h3>
+
+                        <p>
+                            Precio:
+                            S/ ${producto.precio}
+                        </p>
+
+                        <p>
+                            Stock:
+                            ${producto.stock}
+                        </p>
+                    `;
+
+
+                    contenedor.appendChild(tarjeta);
+
+                });
+
+            } catch (error) {
+
+                console.error(error);
+
+                estado.textContent =
+                    'No se pudo conectar con la base de datos.';
+
+            }
+
+        }
+
+
+        cargarProductos();
+
+    </script>
+
+</body>
+
+</html>
